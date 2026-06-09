@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inventario Tecnológico — Iniciar Sesión</title>
+    <title>Activos Tecnológicos — Iniciar Sesión</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <style>
@@ -86,7 +86,7 @@
 <body>
 <div class="login-card">
     <div class="logo-icon"><i class="bi bi-laptop text-white"></i></div>
-    <h4 class="text-center fw-bold mb-1" style="color:#fff">Inventario Tecnológico</h4>
+    <h4 class="text-center fw-bold mb-1" style="color:#fff">Activos Tecnológicos</h4>
     <p class="text-center mb-1" style="color:var(--text-muted);font-size:.88rem">Control de Activos y Equipos</p>
     <div class="text-center mb-4">
         <span class="badge-teal"><i class="bi bi-shield-check me-1"></i>Acceso Seguro</span>
@@ -121,7 +121,7 @@
     </form>
     <div class="divider"></div>
     <p class="text-center mb-0" style="color:var(--text-muted);font-size:.78rem">
-        © {{ date('Y') }} Sistema de Inventario Tecnológico
+        © {{ date('Y') }} Activos Tecnológicos
     </p>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

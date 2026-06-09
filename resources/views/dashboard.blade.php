@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', 'Dashboard — Inventario Tecnológico')
+@section('title', 'Dashboard — Activos Tecnológicos')
 @section('page-title', 'Dashboard Ejecutivo')
 
 @section('content')
