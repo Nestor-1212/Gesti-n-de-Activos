@@ -40,12 +40,12 @@
     </div>
 
     <div class="col-12 col-lg-5">
-        <div class="card" id="resultCard" style="display:none!important">
+        <div class="card" id="resultCard" style="display:none">
             <div class="card-header" id="resultHeader"></div>
             <div class="card-body" id="resultBody"></div>
         </div>
 
-        <div class="card" id="notFoundCard" style="display:none!important">
+        <div class="card" id="notFoundCard" style="display:none">
             <div class="card-body text-center py-4" style="color:var(--text-muted)">
                 <i class="bi bi-search fs-2 d-block mb-2"></i>
                 <div id="notFoundMsg">Equipo no encontrado</div>
@@ -109,15 +109,25 @@ async function lookupCode(code) {
     if (!code.trim()) return;
     stopCamera();
 
-    const res = await fetch('{{ route("scanner.lookup") }}', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrfToken },
-        body: JSON.stringify({ code })
-    });
-    const data = await res.json();
-
     document.getElementById('resultCard').style.display = 'none';
     document.getElementById('notFoundCard').style.display = 'none';
+
+    let data;
+    try {
+        const res = await fetch('{{ route("scanner.lookup") }}', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrfToken },
+            body: JSON.stringify({ code })
+        });
+        if (!res.ok) {
+            showError('Error del servidor (' + res.status + '). Intenta de nuevo.');
+            return;
+        }
+        data = await res.json();
+    } catch (e) {
+        showError('Error de conexión. Verifica tu red e intenta de nuevo.');
+        return;
+    }
 
     if (data.found) {
         const eq = data.equipment;
@@ -134,10 +144,10 @@ async function lookupCode(code) {
             ${eq.assigned_to ? `<div style="font-size:.85rem;color:var(--text-muted)">Asignado a: <strong style="color:var(--text)">${eq.assigned_to}</strong></div>` : ''}
             <a href="${eq.url}" class="btn btn-primary w-100 mt-3"><i class="bi bi-eye me-1"></i>Ver Ficha Completa</a>
         `;
-        document.getElementById('resultCard').style.removeProperty('display');
+        document.getElementById('resultCard').style.display = 'block';
     } else {
         document.getElementById('notFoundMsg').textContent = data.message || 'Equipo no encontrado';
-        document.getElementById('notFoundCard').style.removeProperty('display');
+        document.getElementById('notFoundCard').style.display = 'block';
     }
 }
 
