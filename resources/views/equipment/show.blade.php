@@ -3,21 +3,17 @@
 @section('page-title', 'Detalle del Equipo')
 
 @section('content')
-@php
-$sBadge = ['available'=>'badge-available','assigned'=>'badge-assigned','maintenance'=>'badge-maintenance','damaged'=>'badge-damaged','lost'=>'badge-lost','retired'=>'badge-retired'];
-@endphp
-
 <div class="d-flex align-items-center gap-2 mb-4 flex-wrap">
     <a href="{{ route('equipment.index') }}" class="btn btn-sm" style="background:var(--bg-card);border:1px solid var(--border)">
         <i class="bi bi-arrow-left"></i>
     </a>
     <h5 class="mb-0 fw-bold">{{ $equipment->brand }} {{ $equipment->model }}</h5>
-    <span class="badge rounded-pill {{ $sBadge[$equipment->status] ?? '' }}">{{ $equipment->status_label }}</span>
+    <span class="badge rounded-pill {{ $equipment->status?->badgeClass() ?? '' }}">{{ $equipment->status_label }}</span>
     <div class="ms-auto d-flex gap-2">
         <a href="{{ route('equipment.qr', $equipment) }}" class="btn btn-sm" style="background:var(--bg-card);border:1px solid var(--border)" target="_blank">
             <i class="bi bi-qr-code me-1"></i>QR
         </a>
-        @if($equipment->status === 'available')
+        @if($equipment->status === \App\Enums\EquipmentStatus::Available)
         <a href="{{ route('assignments.create', ['equipment_id'=>$equipment->id]) }}" class="btn btn-sm btn-primary">
             <i class="bi bi-person-plus me-1"></i>Asignar
         </a>
@@ -193,7 +189,7 @@ $sBadge = ['available'=>'badge-available','assigned'=>'badge-assigned','maintena
         <div class="card mb-3 text-center">
             <div class="card-header"><i class="bi bi-qr-code me-2"></i>Código QR</div>
             <div class="card-body">
-                <img src="data:image/png;base64,{{ $qrCode }}" alt="QR" class="img-fluid" style="max-width:180px">
+                <div class="d-flex justify-content-center" style="max-width:190px;margin:0 auto;background:#fff;padding:8px;border-radius:8px">{!! $qrCode !!}</div>
                 <div class="mt-2" style="font-size:.78rem;color:var(--text-muted)">{{ $equipment->qr_code }}</div>
                 <a href="{{ route('equipment.qr', $equipment) }}" class="btn btn-sm w-100 mt-2" style="background:var(--bg-hover);border:1px solid var(--border)" target="_blank">
                     <i class="bi bi-download me-1"></i>Descargar QR
@@ -241,8 +237,8 @@ $sBadge = ['available'=>'badge-available','assigned'=>'badge-assigned','maintena
                 </div>
                 <form method="POST" action="{{ route('assignments.return', $a) }}" class="mt-2">
                     @csrf
-                    <button type="submit" class="btn btn-sm w-100" style="background:rgba(34,197,94,.15);color:#22c55e;border:none"
-                        onclick="return confirm('¿Registrar devolución del equipo?')">
+                    <button type="button" class="btn btn-sm w-100" style="background:rgba(34,197,94,.15);color:#22c55e;border:none"
+                        onclick="confirmDelete(this.closest('form'), '¿Registrar devolución?', 'Se registrará la devolución de este equipo por parte de {{ addslashes($a->collaborator->full_name) }}.')">
                         <i class="bi bi-arrow-return-left me-1"></i>Registrar Devolución
                     </button>
                 </form>

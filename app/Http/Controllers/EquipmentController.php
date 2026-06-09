@@ -63,7 +63,7 @@ class EquipmentController extends Controller
             'activeAssignment.collaborator',
         ]);
 
-        $qrCode = base64_encode($this->service->generateQrPng($equipment));
+        $qrCode = $this->service->generateQrSvg($equipment);
 
         return view('equipment.show', compact('equipment', 'qrCode'));
     }
@@ -101,8 +101,8 @@ class EquipmentController extends Controller
     {
         $this->authorize('view', $equipment);
 
-        return response($this->service->generateQrPng($equipment))
-            ->header('Content-Type', 'image/png')
-            ->header('Content-Disposition', "attachment; filename=\"qr-{$equipment->barcode}.png\"");
+        return response($this->service->generateQrSvg($equipment))
+            ->header('Content-Type', 'image/svg+xml')
+            ->header('Content-Disposition', "attachment; filename=\"qr-{$equipment->barcode}.svg\"");
     }
 }

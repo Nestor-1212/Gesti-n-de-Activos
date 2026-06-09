@@ -40,7 +40,7 @@ class AssignmentController extends Controller
         $this->authorize('create', Assignment::class);
 
         $equipment      = Equipment::available()->orderBy('brand')->get();
-        $collaborators  = Collaborator::where('status', 'active')->orderBy('first_name')->get();
+        $collaborators  = Collaborator::with('department')->where('status', 'active')->orderBy('first_name')->get();
         $selectedEquipment = $request->filled('equipment_id')
             ? Equipment::find($request->equipment_id)
             : null;

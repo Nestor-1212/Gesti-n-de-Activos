@@ -14,6 +14,28 @@ class Equipment extends Model
 {
     use SoftDeletes;
 
+    /** Used by Blade views for filter selects — source of truth comes from the Enums */
+    public static array $statuses = [
+        'available'   => 'Disponible',
+        'assigned'    => 'Asignado',
+        'maintenance' => 'En Reparación',
+        'damaged'     => 'Dañado',
+        'lost'        => 'Extraviado',
+        'retired'     => 'Retirado',
+    ];
+
+    public static array $types = [
+        'smartphone' => 'Smartphone',
+        'tablet'     => 'Tablet',
+        'laptop'     => 'Laptop',
+        'desktop'    => 'Desktop',
+        'printer'    => 'Impresora',
+        'router'     => 'Router',
+        'switch'     => 'Switch',
+        'camera'     => 'Cámara',
+        'other'      => 'Otro',
+    ];
+
     protected $fillable = [
         'barcode', 'qr_code', 'brand', 'model', 'serial_number',
         'imei1', 'imei2', 'phone_number', 'carrier',

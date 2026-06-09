@@ -6,6 +6,7 @@ use App\Enums\EquipmentStatus;
 use App\Models\ActivityLog;
 use App\Models\Equipment;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
@@ -26,6 +27,8 @@ class EquipmentService
             $equipment
         );
 
+        $this->flushDashboardCache();
+
         return $equipment;
     }
 
@@ -45,6 +48,8 @@ class EquipmentService
             $equipment->fresh()->toArray()
         );
 
+        $this->flushDashboardCache();
+
         return $equipment;
     }
 
@@ -57,13 +62,26 @@ class EquipmentService
         );
 
         $equipment->delete();
+        $this->flushDashboardCache();
+    }
+
+    private function flushDashboardCache(): void
+    {
+        Cache::forget('dashboard.stats');
+        Cache::forget('dashboard.by_type');
+        Cache::forget('dashboard.by_status');
+    }
+
+    public function generateQrSvg(Equipment $equipment): string
+    {
+        return QrCode::size(250)->generate(
+            route('equipment.show', $equipment)
+        );
     }
 
     public function generateQrPng(Equipment $equipment): string
     {
-        return QrCode::format('png')->size(300)->generate(
-            route('equipment.show', $equipment)
-        );
+        return $this->generateQrSvg($equipment);
     }
 
     private function storePhotos(Equipment $equipment, array $photos): void

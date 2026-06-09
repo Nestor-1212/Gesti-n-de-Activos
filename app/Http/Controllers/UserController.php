@@ -65,12 +65,17 @@ class UserController extends Controller
 
     public function update(UpdateUserRequest $request, User $user): RedirectResponse
     {
-        $user->update(array_filter([
-            'name'     => $request->name,
-            'email'    => $request->email,
-            'active'   => $request->boolean('active'),
-            'password' => $request->filled('password') ? bcrypt($request->password) : null,
-        ]));
+        $data = [
+            'name'   => $request->name,
+            'email'  => $request->email,
+            'active' => $request->boolean('active'),
+        ];
+
+        if ($request->filled('password')) {
+            $data['password'] = bcrypt($request->password);
+        }
+
+        $user->update($data);
 
         $user->syncRoles([$request->role]);
 

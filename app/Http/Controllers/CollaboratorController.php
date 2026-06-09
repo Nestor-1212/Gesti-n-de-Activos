@@ -17,7 +17,7 @@ class CollaboratorController extends Controller
     {
         $this->authorize('viewAny', Collaborator::class);
 
-        $collaborators = Collaborator::with('department')
+        $collaborators = Collaborator::with(['department', 'assignments' => fn ($q) => $q->where('status', 'active')])
             ->when($request->filled('search'), function ($q) use ($request) {
                 $s = $request->search;
                 $q->where(fn ($q) => $q

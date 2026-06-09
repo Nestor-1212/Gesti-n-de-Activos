@@ -97,10 +97,7 @@
                     </span>
                 </td>
                 <td>
-                    @php
-                    $sBadge = ['available'=>'badge-available','assigned'=>'badge-assigned','maintenance'=>'badge-maintenance','damaged'=>'badge-damaged','lost'=>'badge-lost','retired'=>'badge-retired'];
-                    @endphp
-                    <span class="badge rounded-pill {{ $sBadge[$eq->status] ?? '' }}" style="font-size:.75rem">
+                    <span class="badge rounded-pill {{ $eq->status?->badgeClass() ?? '' }}" style="font-size:.75rem">
                         {{ $eq->status_label }}
                     </span>
                 </td>
@@ -124,9 +121,10 @@
                         <a href="{{ route('equipment.edit', $eq) }}" class="btn btn-sm" title="Editar" style="background:rgba(20,184,166,.15);border:none;color:var(--accent);padding:.25rem .5rem">
                             <i class="bi bi-pencil"></i>
                         </a>
-                        <form method="POST" action="{{ route('equipment.destroy', $eq) }}" onsubmit="return confirm('¿Eliminar este equipo?')">
+                        <form method="POST" action="{{ route('equipment.destroy', $eq) }}">
                             @csrf @method('DELETE')
-                            <button type="submit" class="btn btn-sm" style="background:rgba(239,68,68,.15);border:none;color:#ef4444;padding:.25rem .5rem" title="Eliminar">
+                            <button type="button" class="btn btn-sm" style="background:rgba(239,68,68,.15);border:none;color:#ef4444;padding:.25rem .5rem" title="Eliminar"
+                                onclick="confirmDelete(this.closest('form'), '¿Eliminar equipo?', 'Se eliminará {{ addslashes($eq->brand) }} {{ addslashes($eq->model) }} ({{ addslashes($eq->serial_number) }}). Esta acción no se puede deshacer.')">
                                 <i class="bi bi-trash"></i>
                             </button>
                         </form>

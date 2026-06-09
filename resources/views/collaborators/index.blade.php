@@ -88,9 +88,12 @@
                     <div class="d-flex gap-1">
                         <a href="{{ route('collaborators.show', $c) }}" class="btn btn-sm" style="background:var(--bg-hover);border:1px solid var(--border);padding:.25rem .5rem"><i class="bi bi-eye"></i></a>
                         <a href="{{ route('collaborators.edit', $c) }}" class="btn btn-sm" style="background:rgba(20,184,166,.15);border:none;color:var(--accent);padding:.25rem .5rem"><i class="bi bi-pencil"></i></a>
-                        <form method="POST" action="{{ route('collaborators.destroy', $c) }}" onsubmit="return confirm('¿Eliminar colaborador?')">
+                        <form method="POST" action="{{ route('collaborators.destroy', $c) }}">
                             @csrf @method('DELETE')
-                            <button type="submit" class="btn btn-sm" style="background:rgba(239,68,68,.15);border:none;color:#ef4444;padding:.25rem .5rem"><i class="bi bi-trash"></i></button>
+                            <button type="button" class="btn btn-sm" style="background:rgba(239,68,68,.15);border:none;color:#ef4444;padding:.25rem .5rem" title="Eliminar"
+                                onclick="confirmDelete(this.closest('form'), '¿Eliminar colaborador?', 'Se eliminará a {{ addslashes($c->full_name) }}. Esta acción no se puede deshacer.')">
+                                <i class="bi bi-trash"></i>
+                            </button>
                         </form>
                     </div>
                 </td>

@@ -18,17 +18,26 @@ class LoginController extends Controller
     public function login(Request $request)
     {
         $credentials = $request->validate([
-            'email'    => 'required|email',
-            'password' => 'required',
+            'email'    => 'required|email|max:255',
+            'password' => 'required|string',
         ]);
 
-        if (auth()->attempt($credentials, $request->boolean('remember'))) {
-            $request->session()->regenerate();
-            \App\Models\ActivityLog::record('login', 'Inicio de sesión exitoso');
-            return redirect()->intended(route('dashboard'));
+        $user = \App\Models\User::where('email', $credentials['email'])->first();
+
+        if ($user && ! $user->active) {
+            return back()
+                ->withErrors(['email' => 'Tu cuenta está desactivada. Contacta al administrador.'])
+                ->onlyInput('email');
         }
 
-        return back()->withErrors(['email' => 'Credenciales incorrectas.'])->onlyInput('email');
+        if (! auth()->attempt($credentials, $request->boolean('remember'))) {
+            return back()->withErrors(['email' => 'Credenciales incorrectas.'])->onlyInput('email');
+        }
+
+        $request->session()->regenerate();
+        \App\Models\ActivityLog::record('login', 'Inicio de sesión exitoso');
+
+        return redirect()->intended(route('dashboard'));
     }
 
     public function logout(Request $request)

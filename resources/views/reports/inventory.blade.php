@@ -54,8 +54,7 @@
                 <td>{{ $eq->serial_number }}</td>
                 <td><span class="badge rounded-pill" style="background:rgba(20,184,166,.15);color:var(--accent);font-size:.72rem">{{ $eq->type_label }}</span></td>
                 <td>
-                    @php $sBadge = ['available'=>'badge-available','assigned'=>'badge-assigned','maintenance'=>'badge-maintenance','damaged'=>'badge-damaged','lost'=>'badge-lost','retired'=>'badge-retired']; @endphp
-                    <span class="badge rounded-pill {{ $sBadge[$eq->status]??'' }}" style="font-size:.72rem">{{ $eq->status_label }}</span>
+                    <span class="badge rounded-pill {{ $eq->status?->badgeClass() ?? '' }}" style="font-size:.72rem">{{ $eq->status_label }}</span>
                 </td>
                 <td>{{ $eq->operating_system ?? '—' }}</td>
                 <td>{{ $eq->ram ?? '—' }}</td>

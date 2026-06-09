@@ -32,9 +32,12 @@
                     <div class="d-flex gap-1">
                         <a href="{{ route('users.edit',$u) }}" class="btn btn-sm" style="background:rgba(20,184,166,.15);border:none;color:var(--accent);padding:.25rem .5rem"><i class="bi bi-pencil"></i></a>
                         @if($u->id !== auth()->id())
-                        <form method="POST" action="{{ route('users.destroy',$u) }}" onsubmit="return confirm('¿Eliminar usuario?')">
+                        <form method="POST" action="{{ route('users.destroy',$u) }}">
                             @csrf @method('DELETE')
-                            <button type="submit" class="btn btn-sm" style="background:rgba(239,68,68,.15);border:none;color:#ef4444;padding:.25rem .5rem"><i class="bi bi-trash"></i></button>
+                            <button type="button" class="btn btn-sm" style="background:rgba(239,68,68,.15);border:none;color:#ef4444;padding:.25rem .5rem" title="Eliminar"
+                                onclick="confirmDelete(this.closest('form'), '¿Eliminar usuario?', 'Se eliminará al usuario {{ addslashes($u->name) }}. Esta acción no se puede deshacer.')">
+                                <i class="bi bi-trash"></i>
+                            </button>
                         </form>
                         @endif
                     </div>

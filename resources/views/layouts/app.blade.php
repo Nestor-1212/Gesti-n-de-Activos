@@ -10,7 +10,6 @@
     <style>
         :root {
             --sidebar-w: 260px;
-            /* Paleta: verde agua + naranja + blanco */
             --teal:        #14b8a6;
             --teal-dark:   #0d9488;
             --teal-light:  #2dd4bf;
@@ -42,7 +41,11 @@
             display: flex;
             min-height: 100vh;
         }
-        /* SIDEBAR */
+
+        /* ── UTILITIES ───────────────────────────────────────── */
+        .fw-600 { font-weight: 600; }
+
+        /* ── SIDEBAR ─────────────────────────────────────────── */
         .sidebar {
             width: var(--sidebar-w);
             background: var(--bg-sidebar);
@@ -51,14 +54,15 @@
             flex-direction: column;
             position: fixed;
             top: 0; left: 0; bottom: 0;
-            z-index: 1000;
-            transition: transform .3s;
+            z-index: 1040;
+            transition: transform .28s cubic-bezier(.4,0,.2,1);
             overflow-y: auto;
         }
         .sidebar-logo {
             padding: 1.25rem 1.5rem;
             border-bottom: 1px solid var(--border);
             display: flex; align-items: center; gap: .75rem;
+            flex-shrink: 0;
         }
         .sidebar-logo .logo-icon {
             width: 38px; height: 38px;
@@ -86,7 +90,7 @@
             color: var(--text-muted);
             text-decoration: none;
             font-size: .88rem;
-            transition: all .15s;
+            transition: background .15s, color .15s;
         }
         .nav-link:hover { background: var(--bg-hover); color: var(--text); }
         .nav-link.active {
@@ -96,7 +100,21 @@
             border-left: 3px solid var(--teal);
         }
         .nav-link i { font-size: 1rem; width: 20px; text-align: center; }
-        /* MAIN */
+
+        /* ── SIDEBAR BACKDROP (mobile) ───────────────────────── */
+        .sidebar-backdrop {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,.55);
+            z-index: 1039;
+            backdrop-filter: blur(2px);
+            opacity: 0;
+            transition: opacity .28s;
+        }
+        .sidebar-backdrop.show { opacity: 1; }
+
+        /* ── MAIN ────────────────────────────────────────────── */
         .main-wrapper {
             margin-left: var(--sidebar-w);
             flex: 1;
@@ -114,27 +132,31 @@
         .topbar-title { font-size: 1rem; font-weight: 600; color: var(--text); }
         .topbar-actions { display: flex; align-items: center; gap: .75rem; }
         .content { padding: 1.5rem; flex: 1; }
-        /* CARDS */
+
+        /* ── CARDS ───────────────────────────────────────────── */
         .card {
             background: var(--bg-card);
             border: 1px solid var(--border);
             border-radius: 14px;
+            transition: border-color .2s;
         }
+        .card:hover { border-color: rgba(20,184,166,.25); }
         .card-header {
             background: transparent;
             border-bottom: 1px solid var(--border);
             padding: 1rem 1.25rem;
             font-weight: 600;
         }
-        /* STAT CARDS */
+
+        /* ── STAT CARDS ──────────────────────────────────────── */
         .stat-card {
             background: var(--bg-card);
             border: 1px solid var(--border);
             border-radius: 14px;
             padding: 1.25rem;
-            transition: transform .2s, box-shadow .2s;
+            transition: transform .2s, box-shadow .2s, border-color .2s;
         }
-        .stat-card:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,0,0,.3); }
+        .stat-card:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,0,0,.3); border-color: rgba(20,184,166,.25); }
         .stat-icon {
             width: 48px; height: 48px;
             border-radius: 12px;
@@ -143,21 +165,24 @@
         }
         .stat-value { font-size: 1.8rem; font-weight: 700; line-height: 1; }
         .stat-label { font-size: .8rem; color: var(--text-muted); margin-top: .25rem; }
-        /* BADGE STATUS */
+
+        /* ── BADGES ──────────────────────────────────────────── */
         .badge-available   { background: rgba(20,184,166,.18);  color: var(--teal-light); }
         .badge-assigned    { background: rgba(249,115,22,.18);  color: #fb923c; }
         .badge-maintenance { background: rgba(249,115,22,.15);  color: var(--orange); }
         .badge-damaged     { background: rgba(239,68,68,.15);   color: var(--danger); }
         .badge-lost        { background: rgba(239,68,68,.12);   color: #fca5a5; }
         .badge-retired     { background: rgba(122,184,178,.12); color: var(--text-muted); }
-        .badge-active   { background: rgba(20,184,166,.18); color: var(--teal-light); }
-        .badge-returned { background: rgba(122,184,178,.12); color: var(--text-muted); }
-        /* TABLE */
+        .badge-active      { background: rgba(20,184,166,.18);  color: var(--teal-light); }
+        .badge-returned    { background: rgba(122,184,178,.12); color: var(--text-muted); }
+
+        /* ── TABLE ───────────────────────────────────────────── */
         .table { color: var(--text); }
         .table th { color: var(--text-muted); font-size: .78rem; text-transform: uppercase; letter-spacing: .5px; font-weight: 600; border-color: var(--border); }
         .table td { border-color: var(--border); vertical-align: middle; font-size: .9rem; }
         .table tbody tr:hover { background: rgba(255,255,255,.03); }
-        /* FORMS */
+
+        /* ── FORMS ───────────────────────────────────────────── */
         .form-control, .form-select {
             background: var(--bg-hover);
             border: 1px solid var(--border);
@@ -175,10 +200,10 @@
         .input-group-text { background: var(--bg-hover); border-color: var(--border); color: var(--text-muted); }
         .btn-primary { background: var(--teal); border-color: var(--teal); color: #fff; font-weight: 600; }
         .btn-primary:hover { background: var(--teal-dark); border-color: var(--teal-dark); color: #fff; box-shadow: 0 4px 15px rgba(20,184,166,.35); }
-        /* Botón naranja (secondary) */
         .btn-orange { background: var(--orange); border-color: var(--orange); color: #fff; font-weight: 600; }
         .btn-orange:hover { background: var(--orange-dark); border-color: var(--orange-dark); color: #fff; }
-        /* NOTIFICATIONS */
+
+        /* ── NOTIFICATION BADGE ──────────────────────────────── */
         .notif-badge {
             position: absolute; top: -4px; right: -4px;
             background: var(--orange); color: #fff;
@@ -186,24 +211,66 @@
             border-radius: 50%; width: 18px; height: 18px;
             display: flex; align-items: center; justify-content: center;
         }
-        /* PAGINATION */
-        .pagination .page-link {
-            background: var(--bg-card); border-color: var(--border); color: var(--text-muted);
-        }
+
+        /* ── PAGINATION ──────────────────────────────────────── */
+        .pagination .page-link { background: var(--bg-card); border-color: var(--border); color: var(--text-muted); }
         .pagination .page-link:hover { background: var(--bg-hover); color: var(--teal-light); }
         .pagination .active .page-link { background: var(--teal); border-color: var(--teal); color: #fff; }
-        /* ALERTS */
-        .alert-success { background: rgba(20,184,166,.1);  border-color: rgba(20,184,166,.3);  color: var(--teal-light); }
-        .alert-danger   { background: rgba(239,68,68,.1);   border-color: rgba(239,68,68,.3);   color: #fca5a5; }
-        .alert-warning  { background: rgba(249,115,22,.1);  border-color: rgba(249,115,22,.3);  color: #fdba74; }
-        /* CARD hover accent top border */
-        .card:hover { border-color: rgba(20,184,166,.25); transition: border-color .2s; }
-        /* SCROLLBAR */
+
+        /* ── SCROLLBAR ───────────────────────────────────────── */
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: var(--bg-sidebar); }
         ::-webkit-scrollbar-thumb { background: rgba(20,184,166,.3); border-radius: 3px; }
         ::-webkit-scrollbar-thumb:hover { background: var(--teal); }
-        /* RESPONSIVE */
+
+        /* ── TOAST STACK ─────────────────────────────────────── */
+        .toast-stack {
+            position: fixed; top: 1.25rem; right: 1.25rem;
+            z-index: 9999; width: 340px;
+            display: flex; flex-direction: column; gap: .5rem;
+        }
+        .app-toast {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: .85rem 1rem;
+            display: flex; align-items: flex-start; gap: .75rem;
+            box-shadow: 0 8px 32px rgba(0,0,0,.4);
+            animation: toast-in .3s cubic-bezier(.34,1.56,.64,1);
+        }
+        .app-toast.toast-success { border-left: 3px solid var(--success); }
+        .app-toast.toast-error   { border-left: 3px solid var(--danger); }
+        .app-toast.toast-warning { border-left: 3px solid var(--orange); }
+        .app-toast .toast-icon { font-size: 1.15rem; flex-shrink: 0; margin-top: .05rem; }
+        .app-toast .toast-body { flex: 1; font-size: .88rem; line-height: 1.4; }
+        .app-toast .toast-close { background: none; border: none; color: var(--text-muted); cursor: pointer; padding: 0; font-size: 1rem; flex-shrink: 0; }
+        .app-toast .toast-close:hover { color: var(--text); }
+        @keyframes toast-in {
+            from { opacity: 0; transform: translateX(24px) scale(.96); }
+            to   { opacity: 1; transform: translateX(0) scale(1); }
+        }
+        .app-toast.toast-out {
+            animation: toast-out .2s ease forwards;
+        }
+        @keyframes toast-out {
+            to { opacity: 0; transform: translateX(24px) scale(.96); }
+        }
+
+        /* ── CONFIRM MODAL ───────────────────────────────────── */
+        #confirmModal .modal-content {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+        }
+        #confirmModal .modal-header { border-color: var(--border); }
+        #confirmModal .modal-footer { border-color: var(--border); }
+        .btn-confirm-danger {
+            background: var(--danger); border-color: var(--danger);
+            color: #fff; font-weight: 600;
+        }
+        .btn-confirm-danger:hover { background: #dc2626; border-color: #dc2626; color: #fff; }
+
+        /* ── RESPONSIVE ──────────────────────────────────────── */
         @media (max-width: 768px) {
             .sidebar { transform: translateX(-100%); }
             .sidebar.open { transform: translateX(0); }
@@ -213,6 +280,9 @@
     @stack('styles')
 </head>
 <body>
+
+<!-- SIDEBAR BACKDROP -->
+<div class="sidebar-backdrop" id="sidebarBackdrop" onclick="closeSidebar()"></div>
 
 <!-- SIDEBAR -->
 <aside class="sidebar" id="sidebar">
@@ -268,13 +338,13 @@
         @endif
     </div>
 
-    <div style="padding:.75rem 1rem 1.25rem; border-top:1px solid var(--border);">
+    <div style="padding:.75rem 1rem 1.25rem; border-top:1px solid var(--border); flex-shrink:0;">
         <div class="d-flex align-items-center gap-2" style="font-size:.82rem;">
             <div style="width:34px;height:34px;background:linear-gradient(135deg,var(--teal),var(--orange));border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0;color:#fff;">
                 {{ strtoupper(substr(auth()->user()->name,0,1)) }}
             </div>
             <div style="overflow:hidden;">
-                <div style="font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ auth()->user()->name }}</div>
+                <div class="fw-600" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ auth()->user()->name }}</div>
                 <div style="color:var(--text-muted);font-size:.75rem;">{{ auth()->user()->getRoleNames()->first() }}</div>
             </div>
         </div>
@@ -291,7 +361,7 @@
 <div class="main-wrapper">
     <div class="topbar">
         <div class="d-flex align-items-center gap-3">
-            <button class="btn btn-sm d-md-none" onclick="toggleSidebar()" style="background:var(--bg-hover);border:1px solid var(--border);">
+            <button class="btn btn-sm d-md-none" onclick="toggleSidebar()" style="background:var(--bg-hover);border:1px solid var(--border);width:36px;height:36px;padding:0;border-radius:8px;">
                 <i class="bi bi-list"></i>
             </button>
             <span class="topbar-title">@yield('page-title', 'Panel')</span>
@@ -300,10 +370,10 @@
             @php
                 $unreadCount = \App\Models\Notification::where('user_id', auth()->id())->whereNull('read_at')->count();
             @endphp
-            <a href="{{ route('notifications.index') }}" class="btn position-relative" style="background:var(--bg-hover);border:1px solid var(--border);width:38px;height:38px;padding:0;display:flex;align-items:center;justify-content:center;border-radius:10px;">
+            <a href="{{ route('notifications.index') }}" class="btn position-relative" style="background:var(--bg-hover);border:1px solid var(--border);width:38px;height:38px;padding:0;display:flex;align-items:center;justify-content:center;border-radius:10px;" title="Notificaciones">
                 <i class="bi bi-bell"></i>
                 @if($unreadCount > 0)
-                    <span class="notif-badge">{{ $unreadCount }}</span>
+                    <span class="notif-badge">{{ $unreadCount > 9 ? '9+' : $unreadCount }}</span>
                 @endif
             </a>
             <a href="{{ route('equipment.create') }}" class="btn btn-sm" style="border-radius:10px;padding:.4rem .9rem;background:linear-gradient(135deg,var(--teal),var(--teal-dark));color:#fff;font-weight:600;border:none;box-shadow:0 4px 15px rgba(20,184,166,.3);">
@@ -313,32 +383,121 @@
     </div>
 
     <div class="content">
-        @if(session('success'))
-            <div class="alert alert-success border-0 rounded-3 mb-3 d-flex align-items-center gap-2">
-                <i class="bi bi-check-circle-fill"></i> {{ session('success') }}
-            </div>
-        @endif
-        @if(session('error'))
-            <div class="alert alert-danger border-0 rounded-3 mb-3 d-flex align-items-center gap-2">
-                <i class="bi bi-exclamation-circle-fill"></i> {{ session('error') }}
-            </div>
-        @endif
-        @if($errors->any())
-            <div class="alert alert-danger border-0 rounded-3 mb-3">
-                <i class="bi bi-exclamation-triangle me-2"></i>
-                <ul class="mb-0 mt-1 ps-3">@foreach($errors->all() as $e)<li>{{ $e }}</li>@endforeach</ul>
-            </div>
-        @endif
-
         @yield('content')
+    </div>
+</div>
+
+<!-- ── TOAST STACK ──────────────────────────────────────────────── -->
+<div class="toast-stack" id="toastStack"></div>
+
+<!-- ── CONFIRM MODAL ────────────────────────────────────────────── -->
+<div class="modal fade" id="confirmModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header border-0 pb-0">
+                <div class="d-flex align-items-center gap-2">
+                    <div id="confirmIcon" style="width:40px;height:40px;border-radius:10px;background:rgba(239,68,68,.15);display:flex;align-items:center;justify-content:center;">
+                        <i class="bi bi-exclamation-triangle-fill" style="color:var(--danger)"></i>
+                    </div>
+                    <h6 class="modal-title fw-bold mb-0" id="confirmTitle">Confirmar acción</h6>
+                </div>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body pt-2">
+                <p id="confirmMessage" class="mb-0" style="color:var(--text-muted);font-size:.9rem">¿Estás seguro de que deseas realizar esta acción? Esta operación no se puede deshacer.</p>
+            </div>
+            <div class="modal-footer border-0 pt-0">
+                <button type="button" class="btn" data-bs-dismiss="modal" style="background:var(--bg-hover);border:1px solid var(--border)">Cancelar</button>
+                <button type="button" id="confirmBtn" class="btn btn-confirm-danger">
+                    <i class="bi bi-trash me-1"></i>Eliminar
+                </button>
+            </div>
+        </div>
     </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
+// ── Sidebar (mobile) ─────────────────────────────────────────────
 function toggleSidebar() {
-    document.getElementById('sidebar').classList.toggle('open');
+    const sidebar   = document.getElementById('sidebar');
+    const backdrop  = document.getElementById('sidebarBackdrop');
+    const isOpen    = sidebar.classList.contains('open');
+    if (isOpen) {
+        closeSidebar();
+    } else {
+        sidebar.classList.add('open');
+        backdrop.style.display = 'block';
+        requestAnimationFrame(() => backdrop.classList.add('show'));
+    }
 }
+
+function closeSidebar() {
+    const sidebar  = document.getElementById('sidebar');
+    const backdrop = document.getElementById('sidebarBackdrop');
+    sidebar.classList.remove('open');
+    backdrop.classList.remove('show');
+    setTimeout(() => backdrop.style.display = 'none', 280);
+}
+
+// ── Toast system ─────────────────────────────────────────────────
+function showToast(message, type = 'success', duration = 4500) {
+    const icons = { success: 'bi-check-circle-fill', error: 'bi-x-circle-fill', warning: 'bi-exclamation-triangle-fill' };
+    const colors = { success: 'var(--success)', error: 'var(--danger)', warning: 'var(--orange)' };
+    const stack = document.getElementById('toastStack');
+
+    const toast = document.createElement('div');
+    toast.className = `app-toast toast-${type}`;
+    toast.innerHTML = `
+        <i class="bi ${icons[type]} toast-icon" style="color:${colors[type]}"></i>
+        <div class="toast-body">${message}</div>
+        <button class="toast-close" onclick="dismissToast(this.closest('.app-toast'))"><i class="bi bi-x"></i></button>
+    `;
+    stack.appendChild(toast);
+
+    setTimeout(() => dismissToast(toast), duration);
+}
+
+function dismissToast(el) {
+    if (!el || el.classList.contains('toast-out')) return;
+    el.classList.add('toast-out');
+    setTimeout(() => el.remove(), 200);
+}
+
+// ── Confirm modal ─────────────────────────────────────────────────
+let _pendingForm = null;
+const _confirmModal = new bootstrap.Modal(document.getElementById('confirmModal'));
+
+function confirmDelete(formEl, title = '¿Eliminar registro?', message = 'Esta acción es permanente y no se puede deshacer.') {
+    _pendingForm = formEl;
+    document.getElementById('confirmTitle').textContent   = title;
+    document.getElementById('confirmMessage').textContent = message;
+    _confirmModal.show();
+}
+
+document.getElementById('confirmBtn').addEventListener('click', function () {
+    if (_pendingForm) {
+        _confirmModal.hide();
+        _pendingForm.submit();
+        _pendingForm = null;
+    }
+});
+
+// ── Flash toasts (rendered on load) ──────────────────────────────
+document.addEventListener('DOMContentLoaded', function () {
+    @if(session('success'))
+        showToast(@json(session('success')), 'success');
+    @endif
+    @if(session('error'))
+        showToast(@json(session('error')), 'error');
+    @endif
+    @if(session('warning'))
+        showToast(@json(session('warning')), 'warning');
+    @endif
+    @if($errors->any())
+        showToast(@json($errors->first()), 'error', 7000);
+    @endif
+});
 </script>
 @stack('scripts')
 </body>

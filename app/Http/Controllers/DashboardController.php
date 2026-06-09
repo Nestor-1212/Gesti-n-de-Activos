@@ -2,32 +2,48 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Models\ActivityLog;
+use App\Models\Assignment;
+use App\Models\Collaborator;
+use App\Models\Equipment;
+use App\Models\Notification;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\View\View;
 
 class DashboardController extends Controller
 {
-    public function index()
+    private const CACHE_TTL = 300; // 5 minutes
+
+    public function index(): View
     {
-        $stats = [
-            'total'       => \App\Models\Equipment::count(),
-            'available'   => \App\Models\Equipment::where('status', 'available')->count(),
-            'assigned'    => \App\Models\Equipment::where('status', 'assigned')->count(),
-            'maintenance' => \App\Models\Equipment::where('status', 'maintenance')->count(),
-            'damaged'     => \App\Models\Equipment::where('status', 'damaged')->count(),
-            'lost'        => \App\Models\Equipment::where('status', 'lost')->count(),
-            'retired'     => \App\Models\Equipment::where('status', 'retired')->count(),
-            'total_value' => \App\Models\Equipment::sum('cost'),
-            'collaborators' => \App\Models\Collaborator::where('status', 'active')->count(),
-            'departments'   => \App\Models\Department::where('active', true)->count(),
-        ];
+        $stats = Cache::remember('dashboard.stats', self::CACHE_TTL, function () {
+            return [
+                'total'       => Equipment::count(),
+                'available'   => Equipment::where('status', 'available')->count(),
+                'assigned'    => Equipment::where('status', 'assigned')->count(),
+                'maintenance' => Equipment::where('status', 'maintenance')->count(),
+                'damaged'     => Equipment::where('status', 'damaged')->count(),
+                'lost'        => Equipment::where('status', 'lost')->count(),
+                'retired'     => Equipment::where('status', 'retired')->count(),
+                'total_value' => Equipment::sum('cost'),
+                'collaborators' => Collaborator::where('status', 'active')->count(),
+                'departments'   => \App\Models\Department::where('active', true)->count(),
+            ];
+        });
 
-        $byType = \App\Models\Equipment::selectRaw('type, count(*) as total')
-            ->groupBy('type')->pluck('total', 'type');
+        $byType = Cache::remember('dashboard.by_type', self::CACHE_TTL, function () {
+            return Equipment::selectRaw('type, count(*) as total')
+                ->groupBy('type')
+                ->pluck('total', 'type');
+        });
 
-        $byStatus = \App\Models\Equipment::selectRaw('status, count(*) as total')
-            ->groupBy('status')->pluck('total', 'status');
+        $byStatus = Cache::remember('dashboard.by_status', self::CACHE_TTL, function () {
+            return Equipment::selectRaw('status, count(*) as total')
+                ->groupBy('status')
+                ->pluck('total', 'status');
+        });
 
-        $warrantyExpiring = \App\Models\Equipment::whereNotNull('warranty_expiry')
+        $warrantyExpiring = Equipment::whereNotNull('warranty_expiry')
             ->where('warranty_expiry', '>=', now())
             ->where('warranty_expiry', '<=', now()->addDays(30))
             ->with('mainPhoto')
@@ -35,28 +51,22 @@ class DashboardController extends Controller
             ->limit(5)
             ->get();
 
-        $overdueAssignments = \App\Models\Assignment::where('status', 'active')
+        $overdueAssignments = Assignment::where('status', 'active')
             ->whereNotNull('expected_return')
             ->where('expected_return', '<', now())
             ->with(['equipment', 'collaborator'])
             ->limit(5)
             ->get();
 
-        $recentActivity = \App\Models\ActivityLog::with('user')
+        $recentActivity = ActivityLog::with('user')
             ->latest()
             ->limit(10)
-            ->get();
-
-        $notifications = \App\Models\Notification::where('user_id', auth()->id())
-            ->unread()
-            ->latest()
-            ->limit(5)
             ->get();
 
         return view('dashboard', compact(
             'stats', 'byType', 'byStatus',
             'warrantyExpiring', 'overdueAssignments',
-            'recentActivity', 'notifications'
+            'recentActivity'
         ));
     }
 }

@@ -14,6 +14,12 @@ class ReportController extends Controller
 
     public function inventory(Request $request)
     {
+        $request->validate([
+            'format' => 'nullable|in:pdf,excel',
+            'status' => 'nullable|in:available,assigned,maintenance,damaged,lost,retired',
+            'type'   => 'nullable|in:smartphone,tablet,laptop,desktop,printer,router,switch,camera,other',
+        ]);
+
         $query = \App\Models\Equipment::with('mainPhoto', 'activeAssignment.collaborator.department');
 
         if ($request->filled('status')) $query->where('status', $request->status);

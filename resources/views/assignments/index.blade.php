@@ -60,9 +60,10 @@
                     <div class="d-flex gap-1">
                         <a href="{{ route('assignments.show', $a) }}" class="btn btn-sm" style="background:var(--bg-hover);border:1px solid var(--border);padding:.25rem .5rem"><i class="bi bi-eye"></i></a>
                         @if($a->status === 'active')
-                        <form method="POST" action="{{ route('assignments.return', $a) }}" onsubmit="return confirm('¿Registrar devolución?')">
+                        <form method="POST" action="{{ route('assignments.return', $a) }}">
                             @csrf
-                            <button type="submit" class="btn btn-sm" style="background:rgba(34,197,94,.15);border:none;color:#22c55e;padding:.25rem .5rem" title="Devolver">
+                            <button type="button" class="btn btn-sm" style="background:rgba(34,197,94,.15);border:none;color:#22c55e;padding:.25rem .5rem" title="Registrar devolución"
+                                onclick="confirmDelete(this.closest('form'), '¿Registrar devolución?', 'Se registrará la devolución del equipo de {{ addslashes($a->collaborator->full_name) }}.')">
                                 <i class="bi bi-arrow-return-left"></i>
                             </button>
                         </form>
